@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { axiosWithAuth } from "../utilities/axiosWithAuth";
 
 const initialColor = {
   color: "",
@@ -10,6 +10,7 @@ const ColorList = ({ colors, updateColors }) => {
   console.log(colors);
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
+  const [newBubble, setNewBubble] = useState(initialColor);
 
   const editColor = color => {
     setEditing(true);
@@ -19,13 +20,42 @@ const ColorList = ({ colors, updateColors }) => {
   const saveEdit = e => {
     e.preventDefault();
     // Make a put request to save your updated color
+    axiosWithAuth()
     // think about where will you get the id from...
-    // where is is saved right now?
+      .put(`/api/colors/${colorToEdit.id}`, colorToEdit)
+    
+      .then(res => {
+          
+            // where is it saved right now?
+            setColorToEdit(initialColor);
+            window.location.reload(false);
+          
+      })
+    
+    .catch(err => console.log(err))
   };
 
   const deleteColor = color => {
     // make a delete request to delete this color
+      axiosWithAuth()
+        .delete(`api/colors/${color.id}`)
+        .then(res => {
+            console.log(res);
+            window.location.reload(false);
+        })
+        .catch(err => console.log(err))
   };
+  const addBubble = e => {
+    e.preventDefault();
+    setNewBubble({...newBubble});
+    axiosWithAuth()
+       .post(`api/colors/`, newBubble)
+       .then(res => {
+         setNewBubble(initialColor);
+         window.location.reload(false);
+       })
+       .catch(err => console.log("WHAT ARE U DOING?"))
+  }
 
   return (
     <div className="colors-wrap">
@@ -82,6 +112,35 @@ const ColorList = ({ colors, updateColors }) => {
       )}
       <div className="spacer" />
       {/* stretch - build another form here to add a color */}
+    
+    
+      <form onSubmit={addBubble}>
+          <legend>add bubble</legend>
+          <label>
+            bubble name:
+                <input
+              onChange={e =>
+                setNewBubble({ ...newBubble, color: e.target.value })
+              }
+              value={newBubble.color}
+            />
+          </label>
+          <label>
+            hex code:
+                <input
+              onChange={e =>
+                setNewBubble({
+                  ...newBubble,
+                  code: { hex: e.target.value }
+                })
+              }
+              value={newBubble.code.hex}
+            />
+          </label>
+          <div className="button-row">
+              <button type="submit">Add Bubble</button>
+          </div>
+      </form>
     </div>
   );
 };
