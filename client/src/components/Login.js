@@ -3,7 +3,10 @@ import {axiosWithAuth} from '../utilities/axiosWithAuth'
 
 const Login = (props) => {
 
-  const [logIn, setLogIn] = useState({username: "", password: ""})
+  const [logIn, setLogIn] = useState({
+    username: "",
+    password: "",
+  });
 
   const handleChange = e => {
     setLogIn({...logIn, [e.target.name]: e.target.value})

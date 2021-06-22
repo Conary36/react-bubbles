@@ -6,7 +6,13 @@ const app = express();
 const token =
   "ahuBHejkJJiMDhmODZhZi0zaeLTQ4ZfeaseOGZgesai1jZWYgrTA07i73Gebhu98";
 
-app.use(bodyParser.json());
+app.use(express.json());
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
+// app.use(bodyParser.json());
 app.use(CORS());
 
 let colors = [
